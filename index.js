@@ -27,7 +27,29 @@ app.post('/', async(req,res)=>{
         )
         const result = response.data
 
-        console.log(result)
+        const bookImage = result.docs[0].cover_i
+        const title = result.docs[0].title
+        const authorName = result.docs[0].author_name[0]
+        const publishYear = result.docs[0].first_publish_year
+
+        const bookCover = await axios.get(
+            `https://covers.openlibrary.org/b/id/${bookImage}.jpg`
+        )
+
+        console.log(bookCover)
+       
+        // res.render("index.js", {
+        //     bookCover: bookCover,
+        //     bookTitle: title,
+        //     authorName: authorName,
+        //     publishYear: publishYear
+        // })
+        // console.log(result.docs[0])
+        // console.log(result.docs[0].author_name[0])
+        // console.log(result.docs[0].cover_i)
+        // console.log(result.docs[0].title)
+        // console.log(result.docs[0].first_publish_year)
+       
 
     } catch (error) {
         console.error('Failed to retrieve data:', error.message)
