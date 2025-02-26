@@ -11,8 +11,30 @@ const port= process.env.PORT
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.get('/', (req,res)=>{
-    res.render('index.ejs')
+//db
+const db = new pg.Client({
+    user: process.env.USER,
+    host: process.env.HOST,
+    database: process.env.DATABASE,
+    password: process.env.PASSWORD,
+    port: process.env.POSTGRES_PORT
+})
+
+db.connect();
+
+app.get('/', async(req,res)=>{
+    try {
+        const result = await db.query("SELECT * FROM bookData")
+        const dbBooks = result.rows
+
+        console.log(dbBooks)
+        res.render('index.ejs', { dbBooks: dbBooks})
+
+        
+    } catch (error) {
+        
+    }
+    
 })
 
 
