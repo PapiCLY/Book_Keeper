@@ -1,12 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import pg from 'pg';
 import axios from 'axios';
-import dotenv from 'dotenv';
-dotenv.config();
+import pg from 'pg';
+import 'dotenv/config';
+
 
 const app = express();
-const port= process.env.PORT
+const port= process.env.PORT || 3000
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -21,31 +21,35 @@ const db = new pg.Client({
     port: process.env.PGPORT
 })
 
-db.connect()
-console.log("📌 Connected to database:", process.env.PGDATABASE);
+// db.connect()
 
-
-
-
-app.get('/', async (req, res) => {
-    try {
-        console.log("➡️ Route '/' triggered. Fetching books...");
-
-        const result = await db.query("SELECT * FROM bookdata"); // Query DB
+// app.get('/', async(req,res)=>{
+//     try {
         
-        console.log("✅ Raw Query Result:", result); // Log full object
-        console.log("✅ Extracted Rows:", result.rows); // Log just the rows
+//         const result = await db.query("SELECT * FROM booktable")
+//         console.log(result.rows)
 
-        if (result.rows.length === 0) {
-            console.warn("⚠️ No books found in database.");
-        }
+//     } catch (error) {
+//         console.log(error)
+//     }
+// })
+async function testQuery() {
+    try {
+        await db.connect();
+        console.log("✅ Connected to PostgreSQL");
 
-        res.render('index.ejs', { dbBooks: result.rows });
+        const result = await db.query("SELECT * FROM booktable");
+        console.log("✅ Extracted Rows:", result.rows);
+
+        await db.end();
     } catch (error) {
         console.error("❌ Database error:", error.message);
-        res.render('index.ejs', { dbBooks: [], error: "Failed to load books" });
     }
-});
+}
+
+testQuery();
+
+
 
 
 
