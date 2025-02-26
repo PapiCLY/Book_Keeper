@@ -16,6 +16,7 @@ app.get('/', (req,res)=>{
 })
 
 
+
 app.post('/', async(req,res)=>{
     try {
         const bookTitle = req.body.bookTitle
@@ -26,29 +27,27 @@ app.post('/', async(req,res)=>{
             `https://openlibrary.org/search.json?q=${newTitle}`
         )
         const result = response.data
+        const books = result.docs[0]
 
         const bookImage = result.docs[0].cover_i
-        const title = result.docs[0].title
-        const authorName = result.docs[0].author_name[0]
-        const publishYear = result.docs[0].first_publish_year
+        // const title = result.docs[0].title
+        // const authorName = result.docs[0].author_name[0]
+        // const publishYear = result.docs[0].first_publish_year
 
-        const bookCover = await axios.get(
-            `https://covers.openlibrary.org/b/id/${bookImage}.jpg`
-        )
+        const bookCover = `https://covers.openlibrary.org/b/id/${bookImage}-L.jpg`
 
-        console.log(bookCover)
-       
-        // res.render("index.js", {
-        //     bookCover: bookCover,
-        //     bookTitle: title,
-        //     authorName: authorName,
-        //     publishYear: publishYear
-        // })
+        // Book cover jpg --- console.log(bookCover.config.url)
+       //console.log(result.docs[0])
+        return res.render("index.ejs", {
+            bookCover: bookCover,
+            data: books
+        })
+        
         // console.log(result.docs[0])
-        // console.log(result.docs[0].author_name[0])
-        // console.log(result.docs[0].cover_i)
-        // console.log(result.docs[0].title)
-        // console.log(result.docs[0].first_publish_year)
+        // Author name --- console.log(result.docs[0].author_name[0])
+        // 
+        // Book title --- console.log(result.docs[0].title)
+        // Published year --- console.log(result.docs[0].first_publish_year)
        
 
     } catch (error) {

@@ -25,7 +25,22 @@
      </div>
 </form>
 
+<div>
+    <% if (data) { %>
+        <h3>Title: <%= data.title || "Unknown"%> </h1>
+        <h3>Author: <%= data.author_name ? data.author_name[0] : "Unknown" %></h3>
+        <h4>Published Year: <%= data.first_publish_year || "Unknown" %></h4>
 
+        <% if (bookCover) { %>
+            <img src="<%= bookCover %>" alt="Book Cover">
+        <% } else { %>
+            <p>No cover available.</p>
+        <% } %>
+
+    <% } else if (error) { %>
+        <h3 style="color: red;"><%= error %></h3>
+    <% } %>
+</div>
 
 </body>
 </html>
