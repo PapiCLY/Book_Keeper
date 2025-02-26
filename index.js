@@ -2,7 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import pg from 'pg';
 import axios from 'axios';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 const port= process.env.PORT
@@ -13,29 +14,40 @@ app.use(express.static("public"));
 
 //db
 const db = new pg.Client({
-    user: process.env.USER,
-    host: process.env.HOST,
-    database: process.env.DATABASE,
-    password: process.env.PASSWORD,
-    port: process.env.POSTGRES_PORT
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT
 })
 
-db.connect();
+db.connect()
+console.log("📌 Connected to database:", process.env.PGDATABASE);
 
-app.get('/', async(req,res)=>{
+
+
+
+app.get('/', async (req, res) => {
     try {
-        const result = await db.query("SELECT * FROM bookData")
-        const dbBooks = result.rows
+        console.log("➡️ Route '/' triggered. Fetching books...");
 
-        console.log(dbBooks)
-        res.render('index.ejs', { dbBooks: dbBooks})
-
+        const result = await db.query("SELECT * FROM bookdata"); // Query DB
         
+        console.log("✅ Raw Query Result:", result); // Log full object
+        console.log("✅ Extracted Rows:", result.rows); // Log just the rows
+
+        if (result.rows.length === 0) {
+            console.warn("⚠️ No books found in database.");
+        }
+
+        res.render('index.ejs', { dbBooks: result.rows });
     } catch (error) {
-        
+        console.error("❌ Database error:", error.message);
+        res.render('index.ejs', { dbBooks: [], error: "Failed to load books" });
     }
-    
-})
+});
+
+
 
 
 
