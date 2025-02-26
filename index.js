@@ -1,9 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import axios from 'axios';
 import pg from 'pg';
+import axios from 'axios';
 import 'dotenv/config';
-
 
 const app = express();
 const port= process.env.PORT || 3000
@@ -21,34 +20,24 @@ const db = new pg.Client({
     port: process.env.PGPORT
 })
 
-// db.connect()
+db.connect()
 
-// app.get('/', async(req,res)=>{
-//     try {
-        
-//         const result = await db.query("SELECT * FROM booktable")
-//         console.log(result.rows)
-
-//     } catch (error) {
-//         console.log(error)
-//     }
-// })
-async function testQuery() {
+app.get('/', async(req,res)=>{
     try {
-        await db.connect();
-        console.log("✅ Connected to PostgreSQL");
-
+        
         const result = await db.query("SELECT * FROM booktable");
-        console.log("✅ Extracted Rows:", result.rows);
+        const books = result.rows 
 
-        await db.end();
+
+        console.log(books)
+        res.render('index.ejs', {
+            data: books
+        })
+
     } catch (error) {
-        console.error("❌ Database error:", error.message);
+        console.log(error)
     }
-}
-
-testQuery();
-
+})
 
 
 
