@@ -22,69 +22,86 @@ const db = new pg.Client({
 
 db.connect()
 
-app.get('/', async(req,res)=>{
+app.get("/", async (req, res) => {
     try {
-        
         const result = await db.query("SELECT * FROM booktable");
-        const books = result.rows 
-
-
-        console.log(books)
-        res.render('index.ejs', {
-            dbData: books
-        })
-       
-
+        const dbBooks = result.rows;
+        
+        console.log(dbBooks);
+        res.render("index.ejs", {
+            bookCover: null,
+            data: null, // ✅ Ensure data exists even when no search has been made
+            dbData: dbBooks,
+            error: null
+        });
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        res.render("index.ejs", {
+            bookCover: null,
+            data: null,
+            dbData: [],
+            error: "Error loading saved books."
+        });
     }
-})
+});
 
 
 
 
 
 
-app.post('/', async(req,res)=>{
+
+app.post("/", async (req, res) => {
     try {
-        const bookTitle = req.body.bookTitle
-        let newTitle  = bookTitle.replace(/ /g, '+')
+        const bookTitle = req.body.bookTitle;
+        let newTitle = bookTitle.replace(/ /g, "+");
 
-       
+        // ✅ Fetch data from Open Library API
         const response = await axios.get(
             `https://openlibrary.org/search.json?q=${newTitle}`
-        )
-        const result = response.data
-        const books = result.docs[0]
+        );
+        const result = response.data;
 
-        const bookImage = result.docs[0].cover_i
-        // const title = result.docs[0].title
-        // const authorName = result.docs[0].author_name[0]
-        // const publishYear = result.docs[0].first_publish_year
+        // ✅ Fetch saved books from the database
+        const dbResult = await db.query("SELECT * FROM booktable");
 
-        const bookCover = `https://covers.openlibrary.org/b/id/${bookImage}-L.jpg`
+        // ✅ If no books are found in the API, return only DB books
+        // if (!result.docs.length) {
+        //     return res.render("index.ejs", {
+        //         bookCover: null,
+        //         data: null,
+        //         dbData: dbResult.rows,
+        //         error: "No books found. Try a different title."
+        //     });
+        // }
 
-        // Book cover jpg --- console.log(bookCover.config.url)
-       //console.log(result.docs[0])
+        // ✅ Extract book details
+        const book = result.docs[0];
+        const bookImage = book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg` : null;
 
-       console.log(books)
-       console.log(bookCover)
+        console.log(book);
+        console.log(bookImage);
+
         return res.render("index.ejs", {
-            bookCover: bookCover,
-            data: books
-        })
-        
-        // console.log(result.docs[0])
-        // Author name --- console.log(result.docs[0].author_name[0])
-        // 
-        // Book title --- console.log(result.docs[0].title)
-        // Published year --- console.log(result.docs[0].first_publish_year)
-       
-
+            bookCover: bookImage,
+            data: book,
+            dbData: dbResult.rows, // ✅ Ensure DB books are always passed
+            error: null
+        });
     } catch (error) {
-        console.error('Failed to retrieve data:', error.message)
+        console.error("Failed to retrieve data:", error.message);
+        // ✅ Still fetch DB data on error
+        const dbResult = await db.query("SELECT * FROM booktable");
+        return res.render("index.ejs", {
+            bookCover: null,
+            data: null,
+            dbData: dbResult.rows,
+            error: "Failed to fetch book data. Please try again later."
+        });
     }
-})
+});
+
+
 
 app.listen(port, ()=> {
     console.log(`Server running on port ${port}`)

@@ -29,10 +29,38 @@
 
 <!-- Fetching Data from API -->
 
-<img src="<%= bookCover%>" alt="">
+<!-- Fetching Data from API -->
+<!-- Fetching Data from API -->
+<% if (error) { %>
+    <p style="color: red;"><%= error %></p>
+<% } else if (data) { %>
+    <h1>Title: <%= data.title || "Unknown" %></h1>
+    <h3>Author: <%= data.author_name ? data.author_name[0] : "Unknown" %></h3>
+    <h4>Published Year: <%= data.first_publish_year || "Unknown" %></h4>
+    
+    <% if (bookCover) { %>
+        <img src="<%= bookCover %>" alt="Book Cover">
+    <% } else { %>
+        <p>No cover available.</p>
+    <% } %>
+<% } else { %>
+    <p>No book data found. Try searching for a book.</p>
+<% } %>
 
-<!-- Fetching data from DB -->
-
+<!-- Display user-saved books -->
+<h3>User Saved Books</h3>
+<% if (dbData && dbData.length > 0) { %>
+    <% dbData.forEach(book => { %>
+        <div>
+            <h3><%= book.title %></h3>
+            <h3><%= book.author %></h3>
+            <h3><%= book.published %></h3>
+            <h3><%= book.coverimg || 'No cover' %></h3>
+        </div>
+    <% }); %>
+<% } else { %>
+    <p>No saved books found.</p>
+<% } %>
 
 
 </body>

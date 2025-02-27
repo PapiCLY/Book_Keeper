@@ -38,3 +38,12 @@
     <% } %>
 </div>
 -->
+
+<h3>User saved books</h3>
+ <% for(books of dbData){ %>
+<h3><%= books.title%></h3>
+<h3><%= books.author%></h3>
+<h3><%= books.published%></h3>
+<h3><%= books.coverimg || 'no cover'%></h3>
+
+<%}%>
