@@ -29,10 +29,12 @@
 
 <!-- Fetching Data from API -->
 
-
-
 <!-- Fetching data from DB -->
-
+<% for(let books of dbData){ %>
+    <h1><%= books.title%></h1>
+    <h2> <%= books.author%></h2>
+    <h3> <%= books.published%></h3>
+<%}%>
 
 </body>
 </html>

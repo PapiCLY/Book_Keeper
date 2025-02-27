@@ -31,8 +31,9 @@ app.get('/', async(req,res)=>{
 
         console.log(books)
         res.render('index.ejs', {
-            data: books
+            dbData: books
         })
+       
 
     } catch (error) {
         console.log(error)
@@ -65,6 +66,9 @@ app.post('/', async(req,res)=>{
 
         // Book cover jpg --- console.log(bookCover.config.url)
        //console.log(result.docs[0])
+
+       console.log(books)
+       console.log(bookCover)
         return res.render("index.ejs", {
             bookCover: bookCover,
             data: books
