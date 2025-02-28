@@ -12,7 +12,7 @@
 /* General Styles */
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #f5f5f5;
+  background-color: #e2e1e1;
   margin: 0;
   padding: 20px;
   text-align: center;
@@ -126,3 +126,9 @@ body {
   background-color: #c9302c;
 }
 
+
+.sortDiv{
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+}

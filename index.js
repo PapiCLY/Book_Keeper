@@ -75,7 +75,9 @@ app.post("/", async (req, res) => {
             bookCover: bookImage,
             data: book,
             dbData: dbResult.rows,
-            error: null
+            error: null,
+            sortByYear: null,
+            sortByAuthor: null
         });
     } catch (error) {
         console.error("Failed to retrieve data:", error.message);
@@ -154,8 +156,9 @@ app.post("/author", async(req, res)=>{
         const result = await db.query("SELECT * FROM booktable ORDER BY author")
 
          res.render('index.ejs', {
-            dbData: results.rows,
+            dbData: result.rows,
             sortByAuthor: true,
+            sortByYear: null,
             error: null,
             data: null 
         })

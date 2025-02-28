@@ -22,7 +22,10 @@
     <p style="color: red;"><%= error %></p>
 <% } else if (data) { %>
     <div class="api-book-card">
-        <h2><%= data.title || "Unknown" %></h2>
+        <h2>
+            <%= data.title && data.title.length > 18 ? data.title.slice(0, 18) + '...' : data.title %>
+          </h2>
+          
         <p><%= data.author_name ? data.author_name[0] : "Unknown" %></p>
         <p><%= data.first_publish_year ? data.first_publish_year : "unknown" %></p>
         
@@ -47,29 +50,32 @@
 
 <!-- Display user-saved books -->
 <h3>My Library 📖</h3>
+<hr>
+<h3>Sort Library by...</h3>
+<div class="sortDiv">
+    <label for="Year">Publish Year</label>
+    <form action="/year" method="post">
+        <input type="checkbox" onchange="this.form.submit()" name="year">
+    </form>
+    
+   
+
+    <label for="Author">Author</label>
+    <form action="/author" method="post">
+        <input type="checkbox" onchange="this.form.submit()" name="author">
+    </form>
+    
+</div>
 <div class="saved-books-container">
     <% if (dbData && dbData.length > 0) { %>
-        <h3>Sort Library by...</h3>
+        
 
-        <div class="sortDiv">
-            <label for="Year">Publish Year</label>
-            <form action="/year" method="post">
-                <input type="checkbox" onchange="this.form.submit()" name="year">
-            </form>
-            <% if (sortByYear) { %> checked <% } %> 
-           
-
-            <label for="Author">Author</label>
-            <form action="/author" method="post">
-                <input type="checkbox" onchange="this.form.submit()" name="author">
-            </form>
-            <% if (sortByAuthor) { %> checked <% } %> 
-            
-        </div>
    
         <% dbData.forEach(book => { %>
             <div class="saved-book-card">
-                <h3><%= book.title %></h3>
+                <h3>
+                    <%= book.title.length > 18 ? book.title.slice(0,18)+ '...' : book.title %>
+                </h3>
                 <p><%= book.author %></p>
                 <p><%= book.published %></p>
                 <% if (book.coverimg) { %>
