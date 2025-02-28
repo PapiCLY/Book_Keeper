@@ -51,7 +51,7 @@
 <!-- Display user-saved books -->
 <h3>My Library 📖</h3>
 <hr>
-<h3>Sort Library by...</h3>
+<h3 class="sort-library">Sort Library by...</h3>
 <div class="sortDiv">
     <label for="Year">Publish Year</label>
     <form action="/year" method="post">
@@ -95,6 +95,21 @@
 </div>
 
 <script>
+document.getElementById("openModal").addEventListener("click", function () {
+  document.getElementById("aboutModal").style.display = "block";
+});
+
+document.querySelector(".close").addEventListener("click", function () {
+  document.getElementById("aboutModal").style.display = "none";
+});
+
+// Close modal when clicking outside
+window.addEventListener("click", function (event) {
+  let modal = document.getElementById("aboutModal");
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+});
 
 </script>
 
