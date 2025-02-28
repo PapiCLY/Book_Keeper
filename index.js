@@ -30,7 +30,7 @@ app.get("/", async (req, res) => {
         console.log(dbBooks);
         res.render("index.ejs", {
             bookCover: null,
-            data: null, // ✅ Ensure data exists even when no search has been made
+            data: null, //Ensure data exists even when no search has been made!!!
             dbData: dbBooks,
             error: null
         });
@@ -62,16 +62,6 @@ app.post("/", async (req, res) => {
         //Fetch saved books from the database
         const dbResult = await db.query("SELECT * FROM booktable");
 
-        // ✅ If no books are found in the API, return only DB books
-        // if (!result.docs.length) {
-        //     return res.render("index.ejs", {
-        //         bookCover: null,
-        //         data: null,
-        //         dbData: dbResult.rows,
-        //         error: "No books found. Try a different title."
-        //     });
-        // }
-
         //book details
         const book = result.docs[0];
         const bookImage = book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg` : null;
@@ -87,6 +77,7 @@ app.post("/", async (req, res) => {
         });
     } catch (error) {
         console.error("Failed to retrieve data:", error.message);
+
         //Still fetch DB data on error
         const dbResult = await db.query("SELECT * FROM booktable");
         return res.render("index.ejs", {
@@ -108,7 +99,7 @@ app.post("/add", async (req, res) => {
         );
         console.log("Book added:", title);
 
-        res.redirect("/"); // Redirect to homepage after adding
+        res.redirect("/");
     } catch (error) {
         console.error("Error adding book:", error.message);
         res.status(500).send("Failed to add book");
