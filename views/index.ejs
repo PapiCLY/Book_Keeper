@@ -1,23 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Keeper</title>
-    <link rel="stylesheet" href="/styles/styles.css">
-    <script src="https://kit.fontawesome.com/b60c4c06dc.js" crossorigin="anonymous"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Agbalumo&display=swap" rel="stylesheet">
-</head>
-<body>
+<%- include('partials/header.ejs') -%>
+
 <h1 class='page-title' style="font-weight: bold;">Book<span class="agbalumo-regular">Keeper</span></h1>
 
 
 <form action="/" method="post">
     <div class="wrap">
         <div class="search">
-           <input type="text" class="searchTerm" name='bookTitle' placeholder="Which book are you looking for?">
+           <input type="text" class="searchTerm" name='bookTitle' placeholder="search for books!">
            <button type="submit" class="searchButton">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
@@ -35,8 +24,8 @@
     <div class="api-book-card">
         <h2><%= data.title || "Unknown" %></h2>
         <p><%= data.author_name ? data.author_name[0] : "Unknown" %></p>
-        <p><%= data.first_publish_year || "Unknown" %></p>
-
+        <p><%= data.first_publish_year ? data.first_publish_year : "unknown" %></p>
+        
         <% if (bookCover) { %>
             <img src="<%= bookCover %>" alt="Book Cover">
         <% } else { %>
@@ -52,12 +41,28 @@
             <button type="submit">Add to Library</button>
         </form>
     </div>
+
+    
 <% } %>
 
 <!-- Display user-saved books -->
 <h3>My Library 📖</h3>
 <div class="saved-books-container">
     <% if (dbData && dbData.length > 0) { %>
+        <h3>Sort Library by...</h3>
+
+        <div class="sortDiv">
+            <label for="Year">Publish Year</label>
+            <form action="/year" method="post">
+                <input type="checkbox" onchange="this.form.submit()" name="year">
+            </form>
+
+            <label for="Year">Author</label>
+            <form action="/author" method="post">
+                <input type="checkbox" onchange="this.form.submit()" name="author">
+            </form>
+        </div>
+   
         <% dbData.forEach(book => { %>
             <div class="saved-book-card">
                 <h3><%= book.title %></h3>
@@ -79,7 +84,7 @@
     <% } %>
 </div>
 
+<script>
 
+</script>
 
-</body>
-</html>

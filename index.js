@@ -27,7 +27,7 @@ app.get("/", async (req, res) => {
         const result = await db.query("SELECT * FROM booktable ORDER BY id DESC");
         const dbBooks = result.rows;
         
-        console.log(dbBooks);
+       
         res.render("index.ejs", {
             bookCover: null,
             data: null, //Ensure data exists even when no search has been made!!!
@@ -66,7 +66,7 @@ app.post("/", async (req, res) => {
         const book = result.docs[0];
         const bookImage = book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg` : null;
 
-        console.log(book);
+        
        
 
         return res.render("index.ejs", {
@@ -92,13 +92,13 @@ app.post("/", async (req, res) => {
 app.post("/add", async (req, res) => {
     const { title, author, published, coverimg } = req.body;
 
-    
+    const publishedYear = published ? parseInt(published) || null : null; //for those books without a published year
     try {
         await db.query(
             "INSERT INTO booktable (title, author, published, coverimg) VALUES ($1, $2, $3, $4)",
-            [title, author, published, coverimg]
+            [title, author, publishedYear, coverimg]
         );
-        console.log("Book added:", title);
+        
 
         res.redirect("/");
     } catch (error) {
@@ -116,6 +116,30 @@ app.post('/delete', async(req,res)=>{
     } catch (error) {
         console.error("Error deleting book:", error.message);
         res.status(500).send("Failed to remove book");
+    }
+})
+
+app.post("/year", async(req, res)=>{
+
+
+    try {
+        await db.query("SELECT * FROM booktable ORDER BY published")
+        res.redirect('/')
+    } catch (error) {
+        console.error("Error sorting books:", error.message);
+        res.status(500).send("Failed to sort book");
+    }
+})
+
+app.post("/author", async(req, res)=>{
+
+
+    try {
+        await db.query("SELECT * FROM booktable ORDER BY author")
+        res.redirect('/')
+    } catch (error) {
+        console.error("Error sorting books:", error.message);
+        res.status(500).send("Failed to sort book");
     }
 })
 
