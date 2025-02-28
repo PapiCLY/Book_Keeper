@@ -56,11 +56,15 @@
             <form action="/year" method="post">
                 <input type="checkbox" onchange="this.form.submit()" name="year">
             </form>
+            <% if (sortByYear) { %> checked <% } %> 
+           
 
-            <label for="Year">Author</label>
+            <label for="Author">Author</label>
             <form action="/author" method="post">
                 <input type="checkbox" onchange="this.form.submit()" name="author">
             </form>
+            <% if (sortByAuthor) { %> checked <% } %> 
+            
         </div>
    
         <% dbData.forEach(book => { %>

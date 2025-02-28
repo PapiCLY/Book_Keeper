@@ -32,7 +32,9 @@ app.get("/", async (req, res) => {
             bookCover: null,
             data: null, //Ensure data exists even when no search has been made!!!
             dbData: dbBooks,
-            error: null
+            error: null,
+            sortByYear: null,
+            sortByAuthor: null
         });
     } catch (error) {
         console.log(error);
@@ -123,23 +125,54 @@ app.post("/year", async(req, res)=>{
 
 
     try {
-        await db.query("SELECT * FROM booktable ORDER BY published")
-        res.redirect('/')
+        const results = await db.query("SELECT * FROM booktable ORDER BY published")
+        
+        res.render('index.ejs', {
+            dbData: results.rows,
+            sortByYear: true,
+            sortByAuthor: null,
+            error: null,
+            data: null 
+        })
     } catch (error) {
         console.error("Error sorting books:", error.message);
         res.status(500).send("Failed to sort book");
+
+        const results = await db.query("SELECT * FROM booktable ORDER BY published")
+
+        res.render('index.ejs', {
+            sortResult: results.rows,
+            sortByYear: true,
+            error: null 
+        })
     }
 })
 
 app.post("/author", async(req, res)=>{
-
-
     try {
-        await db.query("SELECT * FROM booktable ORDER BY author")
-        res.redirect('/')
+
+        const result = await db.query("SELECT * FROM booktable ORDER BY author")
+
+         res.render('index.ejs', {
+            dbData: results.rows,
+            sortByAuthor: true,
+            error: null,
+            data: null 
+        })
     } catch (error) {
         console.error("Error sorting books:", error.message);
-        res.status(500).send("Failed to sort book");
+        res.status(500).send(error.message);
+
+
+        const results = await db.query("SELECT * FROM booktable ORDER BY published")
+
+        res.render('index.ejs', {
+            sortResult: results.rows,
+            sortByYear: true,
+            error: null,
+            data: null,
+            dbData: null 
+        })
     }
 })
 
