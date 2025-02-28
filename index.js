@@ -48,21 +48,18 @@ app.get("/", async (req, res) => {
 
 
 
-
-
-
 app.post("/", async (req, res) => {
     try {
         const bookTitle = req.body.bookTitle;
         let newTitle = bookTitle.replace(/ /g, "+");
 
-        // ✅ Fetch data from Open Library API
+        //Open Library API
         const response = await axios.get(
             `https://openlibrary.org/search.json?q=${newTitle}`
         );
         const result = response.data;
 
-        // ✅ Fetch saved books from the database
+        //Fetch saved books from the database
         const dbResult = await db.query("SELECT * FROM booktable");
 
         // ✅ If no books are found in the API, return only DB books
@@ -75,22 +72,22 @@ app.post("/", async (req, res) => {
         //     });
         // }
 
-        // ✅ Extract book details
+        //book details
         const book = result.docs[0];
         const bookImage = book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg` : null;
 
         console.log(book);
-        console.log(bookImage);
+       
 
         return res.render("index.ejs", {
             bookCover: bookImage,
             data: book,
-            dbData: dbResult.rows, // ✅ Ensure DB books are always passed
+            dbData: dbResult.rows,
             error: null
         });
     } catch (error) {
         console.error("Failed to retrieve data:", error.message);
-        // ✅ Still fetch DB data on error
+        //Still fetch DB data on error
         const dbResult = await db.query("SELECT * FROM booktable");
         return res.render("index.ejs", {
             bookCover: null,
@@ -101,6 +98,34 @@ app.post("/", async (req, res) => {
     }
 });
 
+app.post("/add", async (req, res) => {
+    const { title, author, published, coverimg } = req.body;
+
+    try {
+        await db.query(
+            "INSERT INTO booktable (title, author, published, coverimg) VALUES ($1, $2, $3, $4)",
+            [title, author, published, coverimg]
+        );
+        console.log("Book added:", title);
+
+        res.redirect("/"); // Redirect to homepage after adding
+    } catch (error) {
+        console.error("Error adding book:", error.message);
+        res.status(500).send("Failed to add book");
+    }
+});
+
+app.post('/delete', async(req,res)=>{
+    const id = req.body.deleteBook
+
+    try {
+        await db.query("DELETE FROM booktable WHERE id = $1", [id]);
+        res.redirect('/')    
+    } catch (error) {
+        console.error("Error deleting book:", error.message);
+        res.status(500).send("Failed to remove book");
+    }
+})
 
 
 app.listen(port, ()=> {

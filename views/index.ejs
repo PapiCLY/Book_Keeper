@@ -27,9 +27,7 @@
 
 
 
-<!-- Fetching Data from API -->
 
-<!-- Fetching Data from API -->
 <!-- Fetching Data from API -->
 <% if (error) { %>
     <p style="color: red;"><%= error %></p>
@@ -37,25 +35,40 @@
     <h1>Title: <%= data.title || "Unknown" %></h1>
     <h3>Author: <%= data.author_name ? data.author_name[0] : "Unknown" %></h3>
     <h4>Published Year: <%= data.first_publish_year || "Unknown" %></h4>
-    
+ 
     <% if (bookCover) { %>
         <img src="<%= bookCover %>" alt="Book Cover">
+
+        <form action="/add" method="POST">
+            <input type="hidden" name="title" value="<%= data.title %>">
+            <input type="hidden" name="author" value="<%= data.author_name %>">
+            <input type="hidden" name="published" value="<%= data.first_publish_year %>">
+            <input type="hidden" name="coverimg" value="<%= bookCover %>">
+            
+            <button type="submit">Add to Library</button>
+        </form>
+       
+        
     <% } else { %>
         <p>No cover available.</p>
     <% } %>
 <% } else { %>
-    <p>No book data found. Try searching for a book.</p>
+    <p>Start searching for your favorite books! 👉🏽</p>
 <% } %>
 
 <!-- Display user-saved books -->
 <h3>User Saved Books</h3>
-<% if (dbData && dbData.length > 0) { %>
+<% if (dbData) { %>
     <% dbData.forEach(book => { %>
         <div>
             <h3><%= book.title %></h3>
             <h3><%= book.author %></h3>
             <h3><%= book.published %></h3>
-            <h3><%= book.coverimg || 'No cover' %></h3>
+            <img src="<%= book.coverimg || 'No cover' %>" alt="">
+
+            <form action="/delete" method="POST">
+                <button type="submit" name='deleteBook' value="<%=book.id%>">Remove from Library</button>
+            </form>
         </div>
     <% }); %>
 <% } else { %>
