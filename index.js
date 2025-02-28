@@ -24,7 +24,7 @@ db.connect()
 
 app.get("/", async (req, res) => {
     try {
-        const result = await db.query("SELECT * FROM booktable");
+        const result = await db.query("SELECT * FROM booktable ORDER BY id DESC");
         const dbBooks = result.rows;
         
         console.log(dbBooks);
@@ -92,6 +92,7 @@ app.post("/", async (req, res) => {
 app.post("/add", async (req, res) => {
     const { title, author, published, coverimg } = req.body;
 
+    
     try {
         await db.query(
             "INSERT INTO booktable (title, author, published, coverimg) VALUES ($1, $2, $3, $4)",
