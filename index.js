@@ -29,8 +29,9 @@ app.get("/", async (req, res) => {
         
        
         res.render("index.ejs", {
+            //Ensure data exists even when no search has been made!!!
             bookCover: null,
-            data: null, //Ensure data exists even when no search has been made!!!
+            data: null, 
             dbData: dbBooks,
             error: null,
             sortByYear: null,
